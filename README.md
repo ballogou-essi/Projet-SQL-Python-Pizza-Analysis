@@ -4,6 +4,11 @@ Imaginez une pizzeria qui, chaque jour, doit suivre manuellement son stock d'ing
 
 **📌Mon objectif :** automatiser ce processus avec **SQL et Python.**
 
+## Avant de commencer
+- Installer au préalable **DBCode** (c'est sur ca que le fichier notebook nommé 'AnalysePizza.dbcnb' peut s'exécuter)
+- Après installation, connecter DBCode à la base sqlite
+- Enfin connecter vous à la base sqlite ==> ``pizza.db``, puis exécuter le code
+
 ## Structure de la Base de Données
 
 La base donnée se nomme ``pizza.db``; elle est **conçue** pour gérer les commandes de pizzas, les informations sur les pizzas elles-mêmes, leurs types et le stock des ingrédients. Elle est composée des tables suivantes :
