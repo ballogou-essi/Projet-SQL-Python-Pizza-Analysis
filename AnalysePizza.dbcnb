@@ -1,0 +1,401 @@
+cells:
+  - kind: 1
+    languageId: markdown
+    value: "# Vérification de l'importation"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT * FROM orders LIMIT 5; \r
+
+      SELECT * FROM pizza_types LIMIT 5;\r
+
+      SELECT * FROM pizzas LIMIT 5;\r
+
+      SELECT * FROM ingredient_stock LIMIT 5;\r
+
+      SELECT * FROM order_details LIMIT 5;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# A. Analyse des commandes"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Nombre total de commandes :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: SELECT COUNT(*) AS total_commandes FROM orders;
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Nombre de commandes par jour :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT date, COUNT(*) AS nombre_commandes_par_jour \r
+
+      FROM orders \r
+
+      GROUP BY date;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Nombre de commandes par heure :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT time, COUNT(*) AS nombre_commandes_par_heure \r
+
+      FROM orders GROUP BY time;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Première et dernière commande :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT MIN(date) AS premiere_commande, MAX(date) AS derniere_commande \r
+
+      FROM orders;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Nombre de commandes par mois"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT strftime('%Y-%m', date) AS mois, COUNT(*) AS nombre_commandes\r
+
+      FROM orders\r
+
+      GROUP BY mois\r
+
+      ORDER BY mois;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# B. Analyse des ventes de pizzas"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Nombre total de pizzas vendues :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT SUM(quantity) AS total_pizzas_vendues \r
+
+      FROM order_details;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Pizzas les plus vendues (par quantité) :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT p.pizza_type_id, pt.name, SUM(od.quantity) AS total_quantite\r
+
+      FROM order_details od\r
+
+      JOIN pizzas p ON od.pizza_id = p.pizza_id\r
+
+      JOIN pizza_types pt ON p.pizza_type_id = pt.pizza_type_id\r
+
+      GROUP BY p.pizza_type_id\r
+
+      ORDER BY total_quantite DESC\r
+
+      LIMIT 10;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Pizzas les moins vendues (par quantité) :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT p.pizza_type_id, pt.name, SUM(od.quantity) AS total_quantite\r
+
+      FROM order_details od\r
+
+      JOIN pizzas p ON od.pizza_id = p.pizza_id\r
+
+      JOIN pizza_types pt ON p.pizza_type_id = pt.pizza_type_id\r
+
+      GROUP BY p.pizza_type_id\r
+
+      ORDER BY total_quantite ASC\r
+
+      LIMIT 10;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  - Ventes par catégorie de pizza :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT pt.category, SUM(od.quantity * p.price) AS total_ventes\r
+
+      FROM order_details od\r
+
+      JOIN pizzas p ON od.pizza_id = p.pizza_id\r
+
+      JOIN pizza_types pt ON p.pizza_type_id = pt.pizza_type_id\r
+
+      GROUP BY pt.category\r
+
+      ORDER BY total_ventes DESC;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "  ##### Top 5 des pizzas qui ont apporté le plus d'argent à l'entreprise
+      💰"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- La liste des pizzas commandé (quantité & prix)"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    order_details.order_id,\r
+
+      \    order_details.pizza_id,\r
+
+      \    order_details.quantity,\r
+
+      \    pizzas.price\r
+
+      FROM order_details\r
+
+      JOIN pizzas ON order_details.pizza_id = pizzas.pizza_id;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Calcule du montant totale dépensé par le client\r
+
+      \r
+
+      \    Revenue généré par commande = quantité commandée * prix unitaire"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    order_details.pizza_id,\r
+
+      \    order_details.quantity * pizzas.price AS revenu_par_commande\r
+
+      FROM order_details\r
+
+      JOIN pizzas ON order_details.pizza_id = pizzas.pizza_id;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Je regroupe les revenues par type de pizza (id)\r
+
+      \r
+
+      Puisqu'une mème pizza (par exemple ital_supr_m) peut ètre **commander
+      plusieurs fois** donc peut apparaitre **dans plusieurs commandes
+      différentes**, il faudrait **regrouper** avec la fonction ``GROUP BY``"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    order_details.pizza_id,\r
+
+      \    SUM(order_details.quantity * pizzas.price) AS total_revenue\r
+
+      FROM order_details\r
+
+      JOIN pizzas ON order_details.pizza_id = pizzas.pizza_id\r
+
+      GROUP BY order_details.pizza_id;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- J'associe le noms lisibles des pizzas"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    pizza_types.name,\r
+
+      \    SUM(order_details.quantity * pizzas.price) AS total_revenue\r
+
+      FROM order_details\r
+
+      JOIN pizzas ON order_details.pizza_id = pizzas.pizza_id\r
+
+      JOIN pizza_types ON pizzas.pizza_type_id = pizza_types.pizza_type_id\r
+
+      GROUP BY pizza_types.name;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Je trie et j'extrais le top 5 pizzas qui ont rapporté plus\r
+
+      \r
+
+      Je trie toutes les pizzas par leur **revenu total décroissant**, puis je
+      limite le **résultat au top 5 premières pizza**"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    pizza_types.name,\r
+
+      \    SUM(order_details.quantity * pizzas.price) AS total_revenue\r
+
+      FROM order_details\r
+
+      JOIN pizzas ON order_details.pizza_id = pizzas.pizza_id\r
+
+      JOIN pizza_types ON pizzas.pizza_type_id = pizza_types.pizza_type_id\r
+
+      GROUP BY pizza_types.name\r
+
+      ORDER BY total_revenue DESC\r
+
+      LIMIT 5;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# C. Analyse des prix"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Prix moyen des pizzas par taille:"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT size, AVG(price) AS prix_moyen\r
+
+      FROM pizzas\r
+
+      GROUP BY size;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Prix maximal et minimal des pizzas"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT MAX(price) AS prix_maximal, MIN(price) AS prix_minimal\r
+
+      FROM pizzas;"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# D. Analyse des ingrédients "
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: " - Liste de tous les ingrédients uniques :"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: SELECT DISTINCT ingredients FROM pizza_types;
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Pizzas contenant un ingrédient spécifique :\r
+
+      \   \r
+
+      \    exemple, je cherche les pizzas qui contiennent du poulet 'Chicken'"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: SELECT name FROM pizza_types WHERE ingredients LIKE '%Chicken%';
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# F. Analyse combinée"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "SELECT\r
+
+      \    o.date,\r
+
+      \    pt.category,\r
+
+      \    SUM(od.quantity * p.price) AS total_ventes\r
+
+      FROM orders o\r
+
+      JOIN order_details od ON o.order_id = od.order_id\r
+
+      JOIN pizzas p ON od.pizza_id = p.pizza_id\r
+
+      JOIN pizza_types pt ON p.pizza_type_id = pt.pizza_type_id\r
+
+      GROUP BY o.date, pt.category\r
+
+      ORDER BY o.date, pt.category;\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "# Création d'une vue d'ensemble \r
+
+      Cette partie sera plus utile dans le notebook py"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "- Création d'une vue (pizza_sales_summary) pour résumer les ventes par
+      jour, pizza et catégorie, et un index (idx_order_pizza) sur les colonnes
+      order_id et pizza_id de la table order_details."
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "CREATE VIEW IF NOT EXISTS pizza_sales_summary AS\r
+
+      SELECT\r
+
+      \    o.date,\r
+
+      \    p.pizza_id,\r
+
+      \    pt.name AS pizza_name,\r
+
+      \    pt.category,\r
+
+      \    SUM(od.quantity * p.price) AS total_ventes\r
+
+      FROM orders o\r
+
+      JOIN order_details od ON o.order_id = od.order_id\r
+
+      JOIN pizzas p ON od.pizza_id = p.pizza_id\r
+
+      JOIN pizza_types pt ON p.pizza_type_id = pt.pizza_type_id\r
+
+      GROUP BY o.date, p.pizza_id, pt.category\r
+
+      ORDER BY o.date, p.pizza_id;\r\n"
+    metadata: {}
+  - kind: 2
+    languageId: sql
+    value: "CREATE INDEX IF NOT EXISTS idx_order_pizza\r
+
+      ON order_details (order_id, pizza_id);\r\n"
+    metadata: {}
+  - kind: 1
+    languageId: markdown
+    value: "##### Fin...\r
+
+      La section suivante du projet, documentée dans un notebook Python, utilise
+      les données traitées par ces requêtes SQL pour générer des visualisations
+      et créer des alertes."
+    metadata: {}
+metadata:
+  conn:
+    id: qaL08tyL1R-MFd8ImeIwx
+    name: pizza
+  database: main
+  schema: ""
