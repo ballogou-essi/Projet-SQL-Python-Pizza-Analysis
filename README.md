@@ -126,13 +126,10 @@ Le projet est organisé en trois parties principales, chacune correspondant à u
             * `pizza_types`
             * `pizzas`
             * `order_details`
-            * `ingredient_stock`
+            * `ingredient_stock` 
 
         * **Initialisation** de la table `ingredient_stock` avec des instructions `INSERT`. **Note :** Les données insérées ici sont **simulées**.
         * Chargement des données à partir de fichiers CSV à l'aide des commandes SQLite `.mode csv` et `.import`.
-        
-        🧾 Sources des données CSV
-Dataset utilisé : [mavenanalytics.io](https://mavenanalytics.io/)
 
     * **Rôle :** Ce fichier .sql est exécuté pour mettre en place la base de données, en créant les tables nécessaires et en y insérant les données initiales. Il s'agit du point de départ pour utiliser l'application.
 
@@ -259,8 +256,11 @@ erDiagram
 ![alt text](image-1.png)
 ---
 
-# 🧾 Sources des données CSV
-Dataset utilisé : [mavenanalytics.io](https://mavenanalytics.io/)
+# 🧾 Sources des données
+
+**Dataset utilisé (CSV):** [mavenanalytics.io](https://mavenanalytics.io/)
+
+**Données simulées :** LLM Gemeni
 
 # 🔨Outils : 
 ### SQLite, DBCode, VSCode
